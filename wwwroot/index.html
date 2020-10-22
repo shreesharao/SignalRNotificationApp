@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <title>SignalR Simple Chat</title>
+    <style type="text/css">
+        .container {
+            background-color: #99CCFF;
+            border: thick solid #808080;
+            padding: 20px;
+            margin: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <ul id="discussion"></ul>
+    </div>
+    <!--Script references. -->
+    <!--Reference the SignalR library. -->
+    <script type="text/javascript" src="lib/signalr.min.js"></script>
+    <!--Add script to update the page and send messages.-->
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            // Start the connection.
+            var connection = new signalR.HubConnectionBuilder()
+                .withUrl('/notification')
+                .build();
+            console.log('connection established');
+            // Create a function that the hub can call to broadcast messages.
+            connection.on('broadcastMessage', function (i) {
+                // Add the message to the page.
+                var liElement = document.createElement('li');
+                liElement.innerHTML = '<strong>' + i + '</strong>&nbsp;&nbsp;';
+                document.getElementById('discussion').appendChild(liElement);
+            });
+
+            // Transport fallback functionality is now built into start.
+            connection.start()
+                .then(function () {
+                    console.log('connection started');
+                    connection.invoke('send');
+                })
+                .catch(error => {
+                    console.error(error.message);
+                });
+        });
+    </script>
+</body>
+
+</html>
