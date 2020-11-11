@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace ChatSample
+namespace Terarecon.Eureka.Cardiac.NotificationService
 {
     public class Program
     {
@@ -15,6 +15,7 @@ namespace ChatSample
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseUrls("http://::5000");
                 });
     }
 }

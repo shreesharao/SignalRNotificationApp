@@ -17,6 +17,7 @@
     <div class="container">
         <ul id="discussion"></ul>
     </div>
+    <input type="button" id="history" value="History" />
     <!--Script references. -->
     <!--Reference the SignalR library. -->
     <script type="text/javascript" src="lib/signalr.min.js"></script>
@@ -25,7 +26,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             // Start the connection.
             var connection = new signalR.HubConnectionBuilder()
-                .withUrl('/notification')
+                .withUrl('api/cardiac/notification')
                 .build();
             console.log('connection established');
             // Create a function that the hub can call to broadcast messages.
@@ -35,12 +36,20 @@
                 liElement.innerHTML = '<strong>' + i + '</strong>&nbsp;&nbsp;';
                 document.getElementById('discussion').appendChild(liElement);
             });
+            connection.on('welcomeMessage', function (i) {
+                // Add the message to the page.
+                alert(i);
+            });
 
             // Transport fallback functionality is now built into start.
             connection.start()
                 .then(function () {
                     console.log('connection started');
-                    connection.invoke('send');
+                    connection.invoke('SendAsync');
+                    document.getElementById('history').addEventListener('click', function (event) {
+                        // Call the Send method on the hub.
+                        connection.invoke('SendHistoryAsync');
+                    });
                 })
                 .catch(error => {
                     console.error(error.message);
